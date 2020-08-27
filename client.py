@@ -3,25 +3,31 @@
 
 import socket
 import sys
+import logger
 
 if __name__ == "__main__":
+    log = logger.init_logger(file_name='client.log')
+
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         try:
             s.connect(('127.0.0.1', 1080))
+            log.info(f'connected to {s.getpeername()}')
 
             while True:
                 message = str(input('>>> ENTER your message here: '))
 
                 if message == 'exit':
-                    print('Shuting down client...')
+                    log.info('Shuting down client...')
                     break
 
                 s.sendall(message.encode())
                 data = s.recv(10240).decode('ascii')
-                print('recieved : ', repr(data))
+                log.info('recieved : ' + repr(data))
 
         except ConnectionRefusedError as error:
-            print(error, '\r\nMaybe server is down or There is another problem.', file=sys.stderr)
+            log.exception(str(error) + '\r\nMaybe server is down or There is another problem.')
+            # log.error(str(error) + '\r\nMaybe server is down or There is another problem.', exc_info=True)
+            
             
         except KeyboardInterrupt as error:
-            print(error, '\r\nShutting down client...' ,file=sys.stderr)
+            log.error(str(error) + '\r\nShutting down client...')
