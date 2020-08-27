@@ -13,9 +13,9 @@ if __name__ == '__main__':
             socket.AF_INET, # stand for IPv4 address family
             socket.SOCK_STREAM # stand for TCP protocol
         ) as s:
-        s.bind(('', 1080))
-        log.info('server is up...')
         try:
+            s.bind(('', 1080))
+            log.info('server is up...')
             s.listen(2)
 
             while True:
@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
                     while True:
                         try:
-                            data = connection.recv(1024)
+                            data = connection.recv(8192)
 
                             if not data:
                                 break
@@ -48,3 +48,6 @@ if __name__ == '__main__':
                     log.info(f'client {address} now is down!')
         except KeyboardInterrupt as error:
             log.error(str(error) + '\r\nShutting down server...')
+
+        except OSError as error:
+            log.exception(str(error))

@@ -21,13 +21,15 @@ if __name__ == "__main__":
                     break
 
                 s.sendall(message.encode())
-                data = s.recv(10240).decode('ascii')
+                data = s.recv(8192).decode('ascii')
                 log.info('recieved : ' + repr(data))
 
         except ConnectionRefusedError as error:
             log.exception(str(error) + '\r\nMaybe server is down or There is another problem.')
             # log.error(str(error) + '\r\nMaybe server is down or There is another problem.', exc_info=True)
-            
+
+        except BrokenPipeError as error:
+            log.exception(str(error))
             
         except KeyboardInterrupt as error:
             log.error(str(error) + '\r\nShutting down client...')
